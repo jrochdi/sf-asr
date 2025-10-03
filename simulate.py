@@ -36,10 +36,10 @@ USE_VIRTUAL_PACING = False
 
 # For onset detection in stream simulation
 USE_ONLINE_VAD  = True     
-VAD_AGGRESSIVENESS = 3        # 0..3 (3 = most strict)
-SUBFRAME_MS = 20              # WebRTC VAD supports 10/20/30 ms
-VAD_MIN_SUBFRAMES = 4         # need N consecutive speech subframes to tentatively trigger
-VAD_CONFIRM_MS = 400          # if no token within this window, revoke tentative onset
+VAD_AGGRESSIVENESS = 3 # 0..3 
+SUBFRAME_MS = 20 # 10/20/30 ms
+VAD_MIN_SUBFRAMES = 4 # need N consecutive speech subframes to tentatively trigger
+VAD_CONFIRM_MS = 400 # if no token within this window revoke tentative onset
 
 # Load model and apply configuration
 asr_model = nemo_asr.models.ASRModel.from_pretrained(model_name=model_name)
@@ -247,8 +247,8 @@ def feed_wav_into_callback(path, callback_fn):
         # Detect last chunk for finalization latency
         is_last = (idx + frames_per_buffer) >= total
         if is_last and metrics_state.get("t_endpoint_seen") is None:
-            metrics_state["t_endpoint_seen"] = virtual_now(metrics_state)   # virtual time when last audio chunk is observed
-            metrics_state["t_endpoint_wall"] = time.time()                  # wall time when last audio chunk is observed (used for finalization)
+            metrics_state["t_endpoint_seen"] = virtual_now(metrics_state) # virtual time when last audio chunk is observed
+            metrics_state["t_endpoint_wall"] = time.time() # wall time when last audio chunk is observed (used for finalization)
 
         if chunk.shape[0] < frames_per_buffer:
             chunk = np.pad(chunk, (0, frames_per_buffer - chunk.shape[0]), mode='constant')
@@ -320,17 +320,17 @@ all_med_pre_ms, all_med_step_ms = [], []
 
 # per-file mutable state, set before each file
 metrics_state = {
-    "t_start_overall": None,             # stream start time on the clock used for RTF (virtual if pacing, else wall)
-    "t_speech_onset": None,              # confirmed speech onset time (virtual) used as zero for first-partial
-    "t_speech_onset_tentative": None,    # tentative onset time from VAD (virtual) awaiting confirmation
-    "t_first_partial": None,             # time of first emitted token (virtual)
+    "t_start_overall": None, # stream start time on the clock used for RTF (virtual if pacing, else wall)
+    "t_speech_onset": None, # confirmed speech onset time (virtual) used as zero for first-partial
+    "t_speech_onset_tentative": None, # tentative onset time from VAD (virtual) awaiting confirmation
+    "t_first_partial": None, # time of first emitted token (virtual)
     "last_text": "",
     "chunk_pre_ms": [],
     "chunk_step_ms": [],
-    "t_endpoint_seen": None,             # time when last audio chunk observed (virtual) kept for reference
-    "t_endpoint_wall": None,             # wall time when last audio chunk observed used for finalization
+    "t_endpoint_seen": None, # time when last audio chunk observed (virtual) kept for reference
+    "t_endpoint_wall": None, # wall time when last audio chunk observed used for finalization
     "vad_consec_subframes": 0,
-    "virt_now": None,                    # virtual clock current time for stream (seconds) advances by chunk_dur_s
+    "virt_now": None, # virtual clock current time for stream (seconds) advances by chunk_dur_s
 }
 
 def transcribe_chunk_metrics_wrapper(sig):
@@ -394,7 +394,7 @@ for entry in tqdm(entries):
 
     # end of stream times
     t_end_virtual = virtual_now(metrics_state) if USE_VIRTUAL_PACING else time.time()  # end time on RTF clock
-    t_end_wall = time.time()                                                          # wall end time (used for finalization)
+    t_end_wall = time.time() # wall end time (used for finalization)
 
     # metrics
     if metrics_state["t_first_partial"] is None or metrics_state["t_speech_onset"] is None:
