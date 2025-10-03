@@ -1,2 +1,5 @@
 models/
 data/
+ignored/
+results/
+venv/
